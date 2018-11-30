@@ -19,4 +19,4 @@ outputs:
 caches:
 - path: cache
 
-run: {path: build}
+run: {path: builder/build}

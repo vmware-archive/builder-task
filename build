@@ -67,38 +67,31 @@ TAG=${TAG:-latest}
 CONTEXT=${CONTEXT:-.}
 DOCKERFILE=${DOCKERFILE:-$CONTEXT/Dockerfile}
 
-if [ -d ./cache/state ]; then
-  progress "syncing cache to state"
-  rsync -a ./cache/state/ /scratch/state
-fi
-
-if [ -e ./cache/whiteouts ]; then
-  cat ./cache/whiteouts | while read path; do
+if [ -e /cache/whiteouts ]; then
+  cat /cache/whiteouts | while read path; do
     echo "restoring whiteout: $path"
     mknod -m0 $path c 0 0
   done
 fi
 
 progress "building"
-img build -s /scratch/state -t $REPOSITORY:$TAG -f $DOCKERFILE $CONTEXT
+img build -s /cache/state -t $REPOSITORY:$TAG -f $DOCKERFILE $CONTEXT
 
-if [ -d ./cache ]; then
+if [ -d /cache ]; then
   progress "syncing state to cache"
 
-  > ./cache/whiteouts
-  find /scratch/state -type c | while read device; do
+  > /cache/whiteouts
+  find /cache/state -type c | while read device; do
     types=$(stat -c '%t,%T' "$device")
     if [ "$types" = "0,0" ]; then
       echo "recording whiteout: $device"
-      echo $device >> ./cache/whiteouts
+      echo $device >> /cache/whiteouts
       rm $device
     else
       echo "caching non-whiteout char device ($types): $device"
     fi
   done
-
-  rsync -a /scratch/state/ ./cache/state
 fi
 
 progress "saving image"
-img save -s /scratch/state -o image/image.tar $REPOSITORY:$TAG
+img save -s /cache/state -o image/image.tar $REPOSITORY:$TAG
