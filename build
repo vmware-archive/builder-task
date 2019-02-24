@@ -80,7 +80,8 @@ if [ -e ./cache/whiteouts ]; then
 fi
 
 progress "building"
-img build -s /scratch/state -t $REPOSITORY:$TAG -f $DOCKERFILE $CONTEXT
+EXPANDED_BUILD_ARGS=$(echo -n "${BUILD_ARGS}" | xargs -r -n1 printf '--build-arg %s ')
+img build -s /scratch/state -t $REPOSITORY:$TAG -f $DOCKERFILE $EXPANDED_BUILD_ARGS $CONTEXT
 
 if [ -d ./cache ]; then
   progress "syncing state to cache"
