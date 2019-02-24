@@ -38,6 +38,9 @@ The following are optional:
 * `$DOCKERFILE` (default `$CONTEXT/Dockerfile`): the path to the `Dockerfile`
   to build.
 
+* `$BUILD_ARGS` (default ``): a space separated list of build arguments for
+  the build, e.g. `BASE_VERSION=1.0.1 RELEASE=a87c87f878a87`
+
 ### `inputs`
 
 There are no required inputs - your task should just list each artifact it
