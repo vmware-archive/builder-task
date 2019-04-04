@@ -66,6 +66,19 @@ function progress() {
 TAG=${TAG:-latest}
 CONTEXT=${CONTEXT:-.}
 DOCKERFILE=${DOCKERFILE:-$CONTEXT/Dockerfile}
+if [[ -n "$BUILD_ARGS" ]]
+then
+  BUILD_ARGS_OPT=$(echo $BUILD_ARGS | jq -j -r 'to_entries[] | "--build-args " + .key + "=\"" + (.value|tostring) + "\" "')
+else
+  BUILD_ARGS_OPT=""
+fi
+
+if [[ -n "$ENV" ]]
+then
+  ENV_OPT=$(echo $ENV | jq -j -r 'to_entries[] | "--env " + .key + "=\"" + (.value|tostring) + "\" "')
+else
+  ENV_OPT=""
+fi
 
 if [ -d ./cache/state ]; then
   progress "syncing cache to state"
@@ -80,7 +93,7 @@ if [ -e ./cache/whiteouts ]; then
 fi
 
 progress "building"
-img build -s /scratch/state -t $REPOSITORY:$TAG -f $DOCKERFILE $CONTEXT
+img build -s /scratch/state -t $REPOSITORY:$TAG -f $DOCKERFILE $BUILD_ARGS_OPT $ENV_OPT $CONTEXT
 
 if [ -d ./cache ]; then
   progress "syncing state to cache"

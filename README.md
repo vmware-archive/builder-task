@@ -39,6 +39,10 @@ The following are optional:
 * `$DOCKERFILE` (default `$CONTEXT/Dockerfile`): the path to the `Dockerfile`
   to build.
 
+* `$BUILD_ARGS` (default empty): Map of build args
+
+* `$ENV` (default empty): Map of environment variables that will be passed in to the image build
+
 ### `inputs`
 
 There are no required inputs - your task should just list each artifact it
