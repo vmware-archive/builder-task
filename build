@@ -66,7 +66,11 @@ function progress() {
 TAG=${TAG:-latest}
 CONTEXT=${CONTEXT:-.}
 DOCKERFILE=${DOCKERFILE:-$CONTEXT/Dockerfile}
-BUILD_ARGS_OPT=$(env | awk '/BUILD_ARG_/ {gsub(/BUILD_ARG_/, "--build-arg "); printf "%s ",$0}')
+BUILD_ARGS_OPT=()
+while read -r line; do
+  BUILD_ARGS_OPT+=('--build-arg')
+  BUILD_ARGS_OPT+=("${line}")
+done <<<"$(env | grep -E '^BUILD_ARG_' | sed -n 's/^BUILD_ARG_//p')"
 
 if [ -d ./cache/state ]; then
   progress "syncing cache to state"
@@ -81,7 +85,7 @@ if [ -e ./cache/whiteouts ]; then
 fi
 
 progress "building"
-img build -s /scratch/state -t $REPOSITORY:$TAG -f $DOCKERFILE $BUILD_ARGS_OPT $CONTEXT
+img build -s /scratch/state -t $REPOSITORY:$TAG -f $DOCKERFILE "${BUILD_ARGS_OPT[@]}" $CONTEXT
 
 if [ -d ./cache ]; then
   progress "syncing state to cache"
