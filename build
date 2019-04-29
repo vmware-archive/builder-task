@@ -69,9 +69,13 @@ CONTEXT=${CONTEXT:-.}
 DOCKERFILE=${DOCKERFILE:-$CONTEXT/Dockerfile}
 TARGET=${TARGET:-}
 TARGET_FILE=${TARGET_FILE:-}
-BUILD_ARGS_OPT=$(env | awk '/BUILD_ARG_/ {gsub(/BUILD_ARG_/, "--build-arg "); printf "%s ",$0}')
 BUILD_ARGS_FILE=${BUILD_ARGS_FILE:-}
 
+BUILD_ARGS_OPT=()
+while read -r line; do
+  BUILD_ARGS_OPT+=('--build-arg')
+  BUILD_ARGS_OPT+=("${line}")
+done <<<"$(env | grep -E '^BUILD_ARG_' | sed -n 's/^BUILD_ARG_//p')"
 
 tag_name=""
 if [ -n "$TAG_FILE" ]; then
@@ -114,7 +118,6 @@ if [ -n "$BUILD_ARGS_FILE" ]; then
 else
   build_args="$BUILD_ARGS_OPT"
 fi
-
 
 if [ -d ./cache/state ]; then
   progress "syncing cache to state"
