@@ -1,0 +1,29 @@
+resources:
+  - name: govwifi-builder-task
+    type: git
+    source:
+      uri: "https://github.com/alphagov/govwifi-builder-task.git"
+      branch: "master"
+
+  - name: repository
+    type: docker-image
+    source:
+      repository: "((readonly_private_ecr_repo_url))"
+      tag: concourse-builder-latest
+  
+  - name: upstream
+    type: registry-image
+    check_every: '6h'
+    source:
+      repository: r.j3ss.co/img
+
+jobs:
+  - name: build
+    plan:
+    - get: govwifi-builder-task
+      trigger: true
+    - get: upstream
+      trigger: true
+    - put: repository
+      params:
+        build: govwifi-builder-task
