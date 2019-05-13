@@ -67,7 +67,7 @@ TAG=${TAG:-latest}
 CONTEXT=${CONTEXT:-.}
 DOCKERFILE=${DOCKERFILE:-$CONTEXT/Dockerfile}
 BUILD_ARGS_OPT=()
-while read -r line; do
+while read -r line && test "$line"; do
   BUILD_ARGS_OPT+=('--build-arg')
   BUILD_ARGS_OPT+=("${line}")
 done <<<"$(env | grep -E '^BUILD_ARG_' | sed -n 's/^BUILD_ARG_//p')"
