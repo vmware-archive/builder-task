@@ -97,7 +97,7 @@ fi
 
 build_args=()
 
-while read -r line && test "${line}"; do
+while read -r line && test -n "${line}"; do
   build_args+=('--build-arg')
   build_args+=("${line}")
 done <<<"$(env | grep -E '^BUILD_ARG_' | sed -n 's/^BUILD_ARG_//p')"
