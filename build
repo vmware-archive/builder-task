@@ -71,12 +71,6 @@ TARGET=${TARGET:-}
 TARGET_FILE=${TARGET_FILE:-}
 BUILD_ARGS_FILE=${BUILD_ARGS_FILE:-}
 
-BUILD_ARGS_OPT=()
-while read -r line && test "${line}"; do
-  BUILD_ARGS_OPT+=('--build-arg')
-  BUILD_ARGS_OPT+=("${line}")
-done <<<"$(env | grep -E '^BUILD_ARG_' | sed -n 's/^BUILD_ARG_//p')"
-
 tag_name=""
 if [ -n "$TAG_FILE" ]; then
   if [ ! -f "$TAG_FILE" ]; then
@@ -101,22 +95,24 @@ elif [ -n "$TARGET" ]; then
 fi
 
 
-build_args=""
+build_args=()
+
+while read -r line && test "${line}"; do
+  build_args+=('--build-arg')
+  build_args+=("${line}")
+done <<<"$(env | grep -E '^BUILD_ARG_' | sed -n 's/^BUILD_ARG_//p')"
+
 if [ -n "$BUILD_ARGS_FILE" ]; then
   if [ ! -f "$BUILD_ARGS_FILE" ]; then
     echo "build_args file '$BUILD_ARGS_FILE' does not exist"
     exit 1
   fi
 
-  expanded_build_args=()
   while IFS= read -r line || [ -n "$line" ];
   do
-    expanded_build_args+=("--build-arg")
-    expanded_build_args+=("${line}")
-  done < $BUILD_ARGS_FILE
-  build_args="${expanded_build_args[@]}"
-else
-  build_args="$BUILD_ARGS_OPT"
+    build_args+=("--build-arg")
+    build_args+=("${line}")
+  done < "$BUILD_ARGS_FILE"
 fi
 
 if [ -d ./cache/state ]; then
@@ -132,7 +128,7 @@ if [ -e ./cache/whiteouts ]; then
 fi
 
 progress "building"
-img build -s /scratch/state -t $REPOSITORY:$tag_name -f $DOCKERFILE $target_arg $build_args $CONTEXT
+img build -s /scratch/state -t $REPOSITORY:$tag_name -f $DOCKERFILE $target_arg "${build_args[@]}" $CONTEXT
 
 if [ -d ./cache ]; then
   progress "syncing state to cache"
