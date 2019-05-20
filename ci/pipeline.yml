@@ -1,4 +1,17 @@
+groups:
+- name: builder
+  jobs:
+  - build
+- name: self-update
+  jobs:
+  - self-update
+
 resources:
+  - name: tech-ops
+    type: git
+    source:
+      uri: https://github.com/alphagov/tech-ops.git
+
   - name: govwifi-builder-task
     type: git
     source:
@@ -18,6 +31,23 @@ resources:
       repository: r.j3ss.co/img
 
 jobs:
+  - name: self-update
+    serial: true
+    plan:
+    - get: tech-ops
+      params:
+        submodules: none
+    - get: govwifi-builder-task
+      trigger: true
+    - task: set-pipelines
+      file: tech-ops/ci/tasks/self-updating-pipeline.yaml
+      input_mapping: {repository: govwifi-builder-task}
+      params:
+        CONCOURSE_TEAM: govwifi
+        CONCOURSE_PASSWORD: ((readonly_local_user_password))
+        PIPELINE_PATH: ci/pipeline.yml
+        PIPELINE_NAME: builder
+
   - name: build
     plan:
     - get: govwifi-builder-task
