@@ -28,7 +28,7 @@ resources:
     type: registry-image
     check_every: '6h'
     source:
-      repository: r.j3ss.co/img
+      repository: jess/img
 
 jobs:
   - name: self-update

@@ -1,4 +1,4 @@
-FROM r.j3ss.co/img
+FROM jess/img
 USER root
 ENV USER root
 ENV HOME /root
