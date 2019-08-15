@@ -9,6 +9,8 @@ params:
   REPOSITORY: concourse/builder-task
   TAG: latest
   CONTEXT: builder-task
+  CACHE_EXPORT_TYPE: local
+  CACHE_IMPORT_TYPE: local
 
 inputs:
 - name: builder-task

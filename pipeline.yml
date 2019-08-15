@@ -12,3 +12,4 @@ jobs:
   - get: builder-task
   - task: build
     file: builder-task/example.yml
+    privileged: true
