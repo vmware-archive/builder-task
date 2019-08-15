@@ -1,0 +1,14 @@
+---
+resources:
+- name: builder-task
+  type: git
+  source:
+    uri: https://github.com/concourse/builder-task
+    branch: buildkit
+
+jobs:
+- name: build
+  plan:
+  - get: builder-task
+  - task: build
+    file: builder-task/example.yml

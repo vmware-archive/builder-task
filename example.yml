@@ -3,7 +3,7 @@ platform: linux
 
 image_resource:
   type: registry-image
-  source: {repository: concourse/builder-task}
+  source: {repository: issho/concourse-buildkit}
 
 params:
   REPOSITORY: concourse/builder-task
@@ -19,4 +19,4 @@ outputs:
 caches:
 - path: cache
 
-run: {path: builder-task/build}
+run: {path: build}
