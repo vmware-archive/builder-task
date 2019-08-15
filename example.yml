@@ -10,7 +10,9 @@ params:
   TAG: latest
   CONTEXT: builder-task
   CACHE_EXPORT_TYPE: local
+  CACHE_EXPORT_DEST: cache
   CACHE_IMPORT_TYPE: local
+  CACHE_IMPORT_SRC: local
 
 inputs:
 - name: builder-task
