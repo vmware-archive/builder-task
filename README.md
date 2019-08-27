@@ -1,4 +1,14 @@
-# builder
+# builder (DEPRECATED)
+
+This task has been deprecated in favor of the [`oci-build`
+task](https://github.com/vito/oci-build-task).
+
+For a comparison, see [differences from `builder`
+task](https://github.com/vito/oci-build-task#differences-from-builder-task).
+
+The original docs are preserved below in case you still need to reference them.
+
+---
 
 A Concourse task to builds Docker images without pushing and without spinning
 up a Docker daemon. Currently uses [`img`](http://github.com/genuinetools/img)
